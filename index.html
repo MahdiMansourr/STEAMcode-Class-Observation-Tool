@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>STEAMcode — Classroom Observation</title>
+<style>
+:root{
+  --purple:#795ba7; --purple-dark:#5a4290; --purple-deep:#3b2b63;
+  --coral:#f48171; --coral-dark:#e0654f;
+  --ink:#2c2740; --muted:#6b6580; --line:#e7e2f0; --paper:#ffffff;
+  --page:#f5f3fa; --soft:#efeaf7; --soft2:#faf8ff;
+  --ok:#2e9e5b; --gold:#d29a2a; --gray:#9a94ac; --danger:#c9483f;
+  --radius:14px; --shadow:0 14px 38px rgba(59,43,99,.10);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color:var(--ink);background:var(--page);line-height:1.5;font-size:15px}
+h1,h2,h3{margin:0;font-weight:800;color:var(--purple-deep)}
+a{color:var(--purple)}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:14px;color:var(--ink);
+  background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:9px 11px;width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(121,91,167,.15)}
+textarea{resize:vertical;min-height:64px}
+textarea.needfill{border-color:#e9c9c4;background:#fff7f6}
+label{font-size:12.5px;font-weight:700;color:var(--muted);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.02em}
+.req{color:var(--coral-dark)}
+.muted{color:var(--muted)}
+.hidden{display:none!important}
+
+header{background:linear-gradient(120deg,#ffffff, #faf8ff);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.head-wrap{max-width:1060px;margin:0 auto;padding:14px 18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.head-wrap img.logo{height:42px;width:auto}
+.head-titles{flex:1;min-width:180px}
+.head-titles h1{font-size:18px;line-height:1.15}
+.head-titles .sub{font-size:12.5px;color:var(--muted);font-weight:600}
+.ay-badge{background:var(--soft);color:var(--purple-deep);font-weight:800;border-radius:999px;padding:6px 14px;font-size:13px;border:1px solid var(--line)}
+.lang-toggle{display:flex;border:1.5px solid var(--purple);border-radius:999px;overflow:hidden}
+.lang-toggle button{background:#fff;border:none;color:var(--purple);font-weight:800;padding:6px 12px;font-size:13px}
+.lang-toggle button.active{background:var(--purple);color:#fff}
+
+nav.tabs{max-width:1060px;margin:14px auto 0;padding:0 18px;display:flex;gap:8px;flex-wrap:wrap}
+.tab-btn{background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:9px 18px;font-weight:800;color:var(--muted);font-size:14px}
+.tab-btn.active{background:var(--purple);border-color:var(--purple);color:#fff;box-shadow:var(--shadow)}
+
+main{max-width:1060px;margin:16px auto 60px;padding:0 18px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:18px}
+.card h2{font-size:16px;margin-bottom:4px;display:flex;align-items:center;gap:9px}
+.card h2 .dot{width:9px;height:9px;border-radius:50%;background:var(--coral);display:inline-block}
+.card .hint{font-size:12.5px;color:var(--muted);margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.grid.three{grid-template-columns:repeat(auto-fit,minmax(215px,1fr))}
+.field{min-width:0}
+
+.scale{display:flex;gap:10px;flex-wrap:wrap}
+.scale .chip{display:flex;align-items:center;gap:8px;background:var(--soft2);border:1px solid var(--line);border-radius:10px;padding:7px 12px;font-size:13px;font-weight:600}
+.scale .sw{width:14px;height:14px;border-radius:4px}
+.sw.A{background:var(--ok)} .sw.PA{background:var(--gold)} .sw.NO{background:var(--gray)} .sw.NAP{background:#cfc7e0}
+
+.crit-sec{margin-top:8px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.crit-sec>.sec-head{background:var(--purple);color:#fff;padding:10px 14px;font-weight:800;font-size:14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.crit-sec>.sec-head .sc{font-size:12px;font-weight:700;background:rgba(255,255,255,.2);border-radius:999px;padding:3px 10px}
+.crit-row{display:grid;grid-template-columns:1fr 220px;gap:10px;align-items:center;padding:10px 14px;border-top:1px solid var(--line)}
+.crit-row:nth-child(even){background:var(--soft2)}
+.crit-row .txt{font-size:13.5px}
+.rate{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.rate label{display:flex;flex-direction:column;align-items:center;gap:2px;margin:0;cursor:pointer;border:1.5px solid var(--line);border-radius:8px;padding:5px 2px;background:#fff;text-transform:none;letter-spacing:0;font-size:11px;font-weight:800;color:var(--muted)}
+.rate input{display:none}
+.rate label.A.on{background:var(--ok);border-color:var(--ok);color:#fff}
+.rate label.PA.on{background:var(--gold);border-color:var(--gold);color:#fff}
+.rate label.NO.on{background:var(--gray);border-color:var(--gray);color:#fff}
+.rate label.NAP.on{background:#b9aed4;border-color:#b9aed4;color:#fff}
+.sec-comment{padding:10px 14px;border-top:1px solid var(--line);background:#fff}
+
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.btn{border:none;border-radius:10px;padding:11px 20px;font-weight:800;font-size:14px}
+.btn.primary{background:var(--purple);color:#fff}
+.btn.coral{background:var(--coral);color:#fff}
+.btn.ghost{background:#fff;border:1.5px solid var(--line);color:var(--purple-deep)}
+.btn.danger{background:#fff;border:1.5px solid var(--danger);color:var(--danger)}
+.btn:active{transform:translateY(1px)}
+.status{font-size:13px;font-weight:700;margin-left:4px}
+.status.ok{color:var(--ok)} .status.err{color:var(--danger)}
+
+.score-box{display:flex;gap:14px;align-items:center;flex-wrap:wrap;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-top:14px}
+.score-pct{font-size:30px;font-weight:900;color:var(--purple-deep)}
+.score-tags{display:flex;gap:8px;flex-wrap:wrap;font-size:12.5px;font-weight:700}
+.score-tags span{background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 11px}
+.score-note{font-size:11.5px;color:var(--muted);margin-top:4px}
+
+table.rec{width:100%;border-collapse:collapse;font-size:13.5px}
+table.rec th,table.rec td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+table.rec th{font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;color:var(--muted)}
+table.rec tr:hover td{background:var(--soft2)}
+.pill{display:inline-block;background:var(--soft);border-radius:999px;padding:2px 10px;font-weight:800;font-size:12px;color:var(--purple-deep)}
+.mini{padding:6px 12px;font-size:12.5px;border-radius:8px}
+
+.adm-block{border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:14px}
+.chiplist{display:flex;flex-wrap:wrap;gap:8px}
+.chip-item{display:flex;align-items:center;gap:8px;background:var(--soft2);border:1px solid var(--line);border-radius:999px;padding:5px 6px 5px 13px;font-size:13px;font-weight:600}
+.chip-item button{background:none;border:none;color:var(--danger);font-weight:900;font-size:15px;line-height:1;padding:0 4px}
+.teacher-card{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;background:var(--soft2)}
+.teacher-card .tc-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.assign-row{display:grid;grid-template-columns:1fr 120px 34px;gap:8px;margin-bottom:6px}
+.pin-gate{max-width:340px;margin:10px auto;text-align:center}
+.pin-gate .lock-emoji{font-size:34px}
+
+#reportArea{display:none}
+@media print{
+  header,nav.tabs,.no-print{display:none!important}
+  body{background:#fff}
+  main{display:none!important}
+  #reportArea{display:block!important;max-width:100%;margin:0;padding:0}
+  .rep-sec{break-inside:avoid}
+}
+#reportArea{font-size:12px;color:#111}
+.rep-head{display:flex;align-items:center;gap:14px;border-bottom:3px solid var(--purple);padding-bottom:10px;margin-bottom:12px}
+.rep-head img{height:40px}
+.rep-title{font-size:16px;font-weight:800;color:var(--purple-deep)}
+.rep-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:6px 18px;margin-bottom:12px;font-size:12px}
+.rep-meta div span{color:var(--muted);font-weight:700}
+.rep-sec{margin-bottom:12px;border:1px solid #ddd;border-radius:8px;overflow:hidden}
+.rep-sec .rh{background:var(--purple);color:#fff;padding:6px 10px;font-weight:800;font-size:12.5px}
+.rep-item{display:grid;grid-template-columns:1fr 46px;gap:8px;padding:5px 10px;border-top:1px solid #eee}
+.rep-item .rr{font-weight:800;text-align:center}
+.rep-cmt{padding:6px 10px;border-top:1px solid #eee;font-style:italic}
+.rep-score{border:2px solid var(--purple);border-radius:8px;padding:8px 12px;display:inline-block;font-weight:800;color:var(--purple-deep)}
+@media (max-width:640px){ .crit-row{grid-template-columns:1fr} .assign-row{grid-template-columns:1fr 90px 30px} }
+</style>
+</head>
+<body>
+<script id="seed" type="application/json">{"academicYear": "2026–2027", "pin": "steam2027", "branches": [{"code": "E", "en": "English", "fr": "Anglais"}, {"code": "F", "en": "French", "fr": "Français"}], "sections": ["A", "B", "C", "D", "E", "F", "G", "H"], "observedTypes": [{"code": "ict", "en": "ICT class", "fr": "Classe TIC"}, {"code": "steam", "en": "STEAM class", "fr": "Classe STEAM"}], "grades": ["KG1", "KG2", "KG3", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "G10", "G11", "G12"], "schools": ["Ghazali", "Al Doha", "La Cime", "RBIS", "NPC", "Lycee Bchamoun", "Lycee Beirut", "Lycee Bekaata"], "observers": ["Sara Rahhal", "Ali Ghanawi", "Samih Jaber", "Mahdi Mansour"], "teachers": [{"name": "Ghinwa Choukeir", "role": "teacher", "assignments": [{"school": "Ghazali", "section": "E", "grades": ["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8"]}, {"school": "Al Doha", "section": "E", "grades": ["G4", "G5", "G6", "G7", "G8", "G9"]}]}, {"name": "Sahar Al Soloh", "role": "teacher", "assignments": [{"school": "La Cime", "section": "E", "grades": ["KG1", "KG2", "KG3", "G1", "G2", "G3", "G4", "G5", "G6", "G7"]}]}, {"name": "Maya Kaouri", "role": "teacher", "assignments": [{"school": "RBIS", "section": "E", "grades": ["KG1", "KG2", "KG3", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "G10"]}]}, {"name": "Diana Mansour", "role": "teacher", "assignments": [{"school": "NPC", "section": "E", "grades": ["G1", "G2", "G3", "G4", "G5", "G6"]}, {"school": "Lycee Bchamoun", "section": "E", "grades": ["G1", "G2", "G3", "G4", "G5", "G6"]}]}, {"name": "Fawzi Osama Habib", "role": "teacher", "assignments": [{"school": "Lycee Bchamoun", "section": "E", "grades": ["G8", "G9", "G10"]}, {"school": "La Cime", "section": "E", "grades": ["G8", "G9", "G10", "G11"]}, {"school": "NPC", "section": "E", "grades": ["G9", "G10", "G11"]}]}, {"name": "Aya Nazih Mouzannar", "role": "teacher", "assignments": [{"school": "Lycee Bchamoun", "section": "E", "grades": ["G5", "G6", "G7"]}, {"school": "NPC", "section": "E", "grades": ["G7", "G8"]}]}, {"name": "Batoul Naim Koussan", "role": "teacher", "assignments": [{"school": "Lycee Bchamoun", "section": "E", "grades": ["G3", "G4", "G5"]}]}, {"name": "Hussein Ghaith", "role": "teacher", "assignments": [{"school": "Lycee Bchamoun", "section": "F", "grades": ["G6", "G7", "G8", "G9", "G10"]}, {"school": "La Cime", "section": "F", "grades": ["G8", "G9", "G10", "G11"]}]}, {"name": "Inaam Salem", "role": "teacher", "assignments": [{"school": "Lycee Bchamoun", "section": "E", "grades": ["KG3", "G1", "G2"]}]}, {"name": "Reem Jaber", "role": "assistant", "assignments": [{"school": "Lycee Bchamoun", "section": "F", "grades": ["KG1", "KG2", "KG3"]}, {"school": "RBIS", "section": "E", "grades": ["KG1", "KG2", "KG3"]}, {"school": "Lycee Beirut", "section": "E", "grades": ["KG1", "KG2", "KG3"]}]}, {"name": "Zainab Mahdi", "role": "lab", "assignments": [{"school": "Lycee Bchamoun", "section": "F", "grades": []}]}, {"name": "Lilian Moukhallalti", "role": "teacher", "assignments": [{"school": "Lycee Bchamoun", "section": "F", "grades": ["KG2"]}]}, {"name": "Aya Boussy", "role": "teacher", "assignments": [{"school": "Lycee Bchamoun", "section": "F", "grades": ["KG1", "KG2", "KG3", "G1", "G2", "G3", "G4", "G5"]}]}, {"name": "Sylva Rayshouni", "role": "teacher", "assignments": [{"school": "Lycee Beirut", "section": "E", "grades": ["KG1", "KG2", "KG3", "G1", "G2", "G3", "G4", "G5", "G6"]}]}, {"name": "Dalia Mohammad Bou Karroum", "role": "teacher", "assignments": [{"school": "Lycee Bekaata", "section": "E", "grades": ["KG1", "KG2", "KG3", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8"]}]}, {"name": "Lara Saab", "role": "teacher", "assignments": [{"school": "Lycee Bekaata", "section": "F", "grades": ["KG1", "KG2", "KG3", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "G10"]}]}, {"name": "Sarah Khattab", "role": "ict", "assignments": [{"school": "La Cime", "section": "E", "grades": ["G4", "G5", "G6", "G7", "G8", "G9", "G10", "G11"]}, {"school": "La Cime", "section": "F", "grades": ["G8", "G9", "G10", "G11"]}]}, {"name": "Raghad Owayed", "role": "ict", "assignments": [{"school": "Al Doha", "section": "E", "grades": ["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9"]}]}]}</script>
+<script id="crit" type="application/json">[{"id": "tb", "en": "Teaching Behaviors", "fr": "Pratiques d'enseignement", "items": [{"id": "tb1", "en": "Allowing an appropriate amount of time for each activity.", "fr": "Accorder un temps approprié à chaque activité."}, {"id": "tb2", "en": "Managing time in the classroom and establishing a consistent routine.", "fr": "Gérer le temps en classe et établir une routine cohérente."}, {"id": "tb3", "en": "Facilitating discussions using the proper language.", "fr": "Animer les discussions en utilisant un langage approprié."}, {"id": "tb4", "en": "Using effective voice, body language, gestures and cues.", "fr": "Utiliser efficacement la voix, le langage corporel, les gestes et les signaux."}, {"id": "tb5", "en": "Creating enthusiasm for the learning at hand.", "fr": "Susciter l'enthousiasme pour l'apprentissage en cours."}, {"id": "tb6", "en": "Giving immediate feedback on students' questions and errors.", "fr": "Donner un retour immédiat sur les questions et les erreurs des élèves."}]}, {"id": "cm", "en": "Classroom Management", "fr": "Gestion de la classe", "items": [{"id": "cm1", "en": "Fostering a positive and safe environment that embraces all learners and treats each learner equitably.", "fr": "Favoriser un environnement positif et sûr qui accueille tous les apprenants et traite chacun équitablement."}, {"id": "cm2", "en": "Encouraging learners to share their opinions without fear of negative comments from their peers.", "fr": "Encourager les apprenants à partager leurs opinions sans crainte de commentaires négatifs de leurs pairs."}, {"id": "cm3", "en": "Giving attention to learners depending on individual needs.", "fr": "Accorder de l'attention aux apprenants selon leurs besoins individuels."}, {"id": "cm4", "en": "Applying classroom rules consistently.", "fr": "Appliquer les règles de la classe de manière cohérente."}, {"id": "cm5", "en": "Showing an understanding of the subject matter being taught.", "fr": "Démontrer une maîtrise de la matière enseignée."}, {"id": "cm6", "en": "Using classroom tools properly (active board, desks, other tools).", "fr": "Utiliser correctement les outils de la classe (tableau interactif, pupitres, autres outils)."}, {"id": "cm7", "en": "Applying the lesson plan with fidelity to the learning objectives the program outlines.", "fr": "Appliquer le plan de leçon en respectant les objectifs d'apprentissage du programme."}, {"id": "cm8", "en": "Employing educational techniques, strategies and applied activities in the educational process.", "fr": "Employer des techniques, des stratégies et des activités pédagogiques dans le processus d'apprentissage."}, {"id": "cm9", "en": "Responding to learning difficulties and individual needs of students.", "fr": "Répondre aux difficultés d'apprentissage et aux besoins individuels des élèves."}, {"id": "cm10", "en": "Employing questioning techniques in the learning process.", "fr": "Utiliser des techniques de questionnement dans le processus d'apprentissage."}, {"id": "cm11", "en": "Encouraging students' involvement in the learning process.", "fr": "Encourager la participation des élèves au processus d'apprentissage."}, {"id": "cm12", "en": "Maintaining a professional role and positive interaction with students.", "fr": "Maintenir un rôle professionnel et une interaction positive avec les élèves."}, {"id": "cm13", "en": "Maintaining professional communication with colleagues.", "fr": "Maintenir une communication professionnelle avec les collègues."}]}, {"id": "tr", "en": "Tools and Resources", "fr": "Outils et ressources", "items": [{"id": "tr1", "en": "All materials needed are prepared before the session.", "fr": "Tout le matériel nécessaire est préparé avant la séance."}, {"id": "tr2", "en": "Organizing the classroom and preparing the tools.", "fr": "Organiser la classe et préparer les outils."}, {"id": "tr3", "en": "Distributing and collecting materials properly to/from the groups.", "fr": "Distribuer et récupérer le matériel correctement auprès des groupes."}, {"id": "tr4", "en": "Checking students' copybooks.", "fr": "Vérifier les cahiers des élèves."}, {"id": "tr5", "en": "Sorting reusable materials from the non-usable materials.", "fr": "Trier le matériel réutilisable du matériel non réutilisable."}, {"id": "tr6", "en": "The teacher's own creative touch was clear in the session.", "fr": "La touche créative personnelle de l'enseignant était manifeste durant la séance."}]}]</script>
+<script id="i18n" type="application/json">{"en": {"appTitle": "Classroom Observation", "appSub": "STEAMcode — Education for Innovation", "appSub2": "Classroom Observation", "tabObs": "Observation", "tabRec": "Records", "tabAdm": "Admin", "detailsTitle": "Visit details", "detailsHint": "Pick the observer and teacher; school and section adjust automatically.", "fDate": "Date", "fObserver": "Observer", "fTeacher": "Teacher", "fSchool": "School", "fSection": "Section", "fGrade": "Grade", "fBranch": "Branch", "fObserved": "Observed class", "fTopic": "Session topic / unit", "fSession": "Session #", "fAY": "Academic year", "fNewPin": "New PIN", "choose": "— Choose —", "scaleTitle": "Rating scale", "criteriaTitle": "Observation criteria", "commentsTitle": "Overall comments", "scale_A": "Achieved", "scale_PA": "Partially Achieved", "scale_NO": "Not Observed", "scale_NAP": "Not Applicable", "scoreNote": "Weighted: A = 1, PA = ⅔, NO = ⅓. Only “Not Applicable” is excluded. Check the A / PA / NO tally to see where weaknesses are.", "sectionComment": "General comment for this section", "sectionCommentPh": "Please fill this section with the necessary details.", "gradesPh": "Grades, e.g. KG1, G1, G2", "needTopic": "Please fill the session topic / unit.", "scoreLabel": "Achievement score", "overallPh": "Strengths, areas to develop, follow-up actions…", "btnSave": "Save", "btnPrint": "Print / PDF", "btnNew": "New", "btnBackup": "Backup (export file)", "btnRestore": "Restore (import file)", "recTitle": "Saved observations", "recHint": "Records are saved in this browser. Use Backup to export a file you can keep or move to another computer.", "thDate": "Date", "thTeacher": "Teacher", "thSchool": "School", "thObserver": "Observer", "thScore": "Score", "noRecords": "No saved observations yet.", "print": "Print", "delete": "Delete", "admLocked": "Admin panel", "admLockedHint": "Enter the PIN to manage names, schools and settings.", "btnUnlock": "Unlock", "admSettings": "General settings", "btnApply": "Apply", "btnLock": "Lock", "admObservers": "Observers", "admObsHint": "People who can carry out observations.", "admSchools": "Schools", "admTeachers": "Teachers", "admTeachHint": "Each teacher can be assigned to one or more schools and sections.", "admSecurity": "Security & backup", "btnAdd": "Add", "btnAddTeacher": "+ Add teacher", "btnChangePin": "Change PIN", "btnDownloadCopy": "Download updated copy", "btnBackupCfg": "Backup settings", "btnRestoreCfg": "Restore settings", "downloadHint": "“Download updated copy” saves a fresh HTML file with your current names baked in — use it to archive this year or share with observers.", "role": "Role", "role_teacher": "Teacher", "role_assistant": "Assistant", "role_lab": "Lab Coordinator", "role_ict": "ICT Teacher", "assignments": "Assignments (school · branch)", "addAssign": "Add assignment", "newTeacher": "New teacher", "addNamePh": "Add a name…", "addSchoolPh": "Add a school…", "reportTitle": "Classroom Observation Report", "needFields": "Please fill date, observer, school and teacher.", "needTeacher": "Please choose a teacher first.", "needComments": "Please fill the general comment for every section.", "futureDate": "The date cannot be in the future.", "saved": "Saved ✓", "cleared": "Form cleared", "exported": "Exported ✓", "imported": "Imported ✓", "badFile": "Invalid file.", "confirmDelete": "Delete this item?", "confirmRestore": "Replace all current records? Cancel = merge instead.", "wrongPin": "Wrong PIN.", "applied": "Applied ✓", "pinEmpty": "PIN cannot be empty.", "pinChanged": "PIN changed ✓", "copyDownloaded": "Copy downloaded ✓"}, "fr": {"appTitle": "Observation de classe", "appSub": "STEAMcode — Éducation pour l'innovation", "appSub2": "Observation de classe", "tabObs": "Observation", "tabRec": "Enregistrements", "tabAdm": "Administration", "detailsTitle": "Détails de la visite", "detailsHint": "Choisissez l'observateur et l'enseignant ; l'école et la section s'ajustent automatiquement.", "fDate": "Date", "fObserver": "Observateur", "fTeacher": "Enseignant", "fSchool": "École", "fSection": "Section", "fGrade": "Niveau", "fBranch": "Branche", "fObserved": "Classe observée", "fTopic": "Sujet / unité de la séance", "fSession": "N° de séance", "fAY": "Année scolaire", "fNewPin": "Nouveau code", "choose": "— Choisir —", "scaleTitle": "Échelle d'évaluation", "criteriaTitle": "Critères d'observation", "commentsTitle": "Commentaires généraux", "scale_A": "Atteint", "scale_PA": "Partiellement atteint", "scale_NO": "Non observé", "scale_NAP": "Non applicable", "scoreNote": "Pondéré : A = 1, PA = ⅔, NO = ⅓. Seul « Non applicable » est exclu. Consultez le détail A / PA / NO pour repérer les faiblesses.", "sectionComment": "Commentaire général pour cette section", "sectionCommentPh": "Veuillez remplir cette section avec les détails nécessaires.", "gradesPh": "Niveaux, ex. KG1, G1, G2", "needTopic": "Veuillez renseigner le sujet / l'unité de la séance.", "scoreLabel": "Score de réussite", "overallPh": "Points forts, axes de progrès, actions de suivi…", "btnSave": "Enregistrer", "btnPrint": "Imprimer / PDF", "btnNew": "Nouveau", "btnBackup": "Sauvegarder (exporter)", "btnRestore": "Restaurer (importer)", "recTitle": "Observations enregistrées", "recHint": "Les enregistrements sont conservés dans ce navigateur. Utilisez « Sauvegarder » pour exporter un fichier à conserver ou à transférer.", "thDate": "Date", "thTeacher": "Enseignant", "thSchool": "École", "thObserver": "Observateur", "thScore": "Score", "noRecords": "Aucune observation enregistrée pour l'instant.", "print": "Imprimer", "delete": "Supprimer", "admLocked": "Panneau d'administration", "admLockedHint": "Saisissez le code pour gérer les noms, écoles et paramètres.", "btnUnlock": "Déverrouiller", "admSettings": "Paramètres généraux", "btnApply": "Appliquer", "btnLock": "Verrouiller", "admObservers": "Observateurs", "admObsHint": "Personnes autorisées à mener des observations.", "admSchools": "Écoles", "admTeachers": "Enseignants", "admTeachHint": "Chaque enseignant peut être affecté à une ou plusieurs écoles et sections.", "admSecurity": "Sécurité et sauvegarde", "btnAdd": "Ajouter", "btnAddTeacher": "+ Ajouter un enseignant", "btnChangePin": "Modifier le code", "btnDownloadCopy": "Télécharger une copie à jour", "btnBackupCfg": "Sauvegarder les paramètres", "btnRestoreCfg": "Restaurer les paramètres", "downloadHint": "« Télécharger une copie à jour » enregistre un nouveau fichier HTML avec vos noms actuels intégrés — pour archiver l'année ou le partager avec les observateurs.", "role": "Fonction", "role_teacher": "Enseignant", "role_assistant": "Assistant", "role_lab": "Coordinateur de laboratoire", "role_ict": "Enseignant TIC", "assignments": "Affectations (école · branche)", "addAssign": "Ajouter une affectation", "newTeacher": "Nouvel enseignant", "addNamePh": "Ajouter un nom…", "addSchoolPh": "Ajouter une école…", "reportTitle": "Rapport d'observation de classe", "needFields": "Veuillez renseigner la date, l'observateur, l'école et l'enseignant.", "needTeacher": "Veuillez d'abord choisir un enseignant.", "needComments": "Veuillez remplir le commentaire général de chaque section.", "futureDate": "La date ne peut pas être dans le futur.", "saved": "Enregistré ✓", "cleared": "Formulaire réinitialisé", "exported": "Exporté ✓", "imported": "Importé ✓", "badFile": "Fichier invalide.", "confirmDelete": "Supprimer cet élément ?", "confirmRestore": "Remplacer tous les enregistrements actuels ? Annuler = fusionner.", "wrongPin": "Code incorrect.", "applied": "Appliqué ✓", "pinEmpty": "Le code ne peut pas être vide.", "pinChanged": "Code modifié ✓", "copyDownloaded": "Copie téléchargée ✓"}}</script>
+
+<header>
+  <div class="head-wrap">
+    <img class="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA3YAAAD+CAYAAAB2ppelAAAACXBIWXMAAC4jAAAuIwF4pT92AABOsUlEQVR4nO3dd7jkZP3+8feyLLAwsHTprICUBWQtKFaKoIgooKDEoCCoiIoarLENATU//aqDBRuoqISAgqKCioUiKEWaIL2INBHphF3a7v7+eDLO7OFMybTnycz9uq69ds45meQ+M3Nm8snTZixZsgQREREREREpr2VsBxAREREREZH+qLATEREREREpORV2IiIiIiIiJafCTkREREREpORU2ImIiIiIiJScCjsREREREZGSU2EnIiIiIiJScirsRERERERESk6FnYiIiIiISMmpsBMRERERESk5FXYiIiIiIiIlp8JORERERESk5FTYiYiIiIiIlJwKOxERERERkZJTYSciIiIiIlJyKuxERERERERKToWdiIiIiIhIyamwExERERERKTkVdiIiIiIiIiWnwk5ERERERKTkVNiJiIiIiIiUnAo7ERERERGRklNhJyIiIiIiUnIq7EREREREREpOhZ2IiIiIiEjJqbATEREREREpORV2IiIiIiIiJafCTkREREREpORU2ImIiIiIiJScCjsREREREZGSU2EnIiIiIiJScsvaDjBjxoyhHyP009WB7YHnAJsAGwKzgcrQD96dJ4CbgIuAM+LEe2hQOw79dBtgb2AbYG1UzE+ap4F7gUuAX8SJ9y/LefoS+umywB7Aq4DNgJXsJmIx8F/M4/vrOPFutJynb6GfLgO8HHg9sCmw+oAPUX/MLgV+FSfeDQPe/0iFfjobeAOwC7AR5rNlUDLgn8DvgT/Eiff4APfttNBPVwGei/nc3hJYB5gDrAzMtBit2SLM++vlmPfXmy3nKa3QT8/AnXOyUVgAPAo8AtwKXA/cANwQJ94im8GKCv10BeA1wKuBjRnv53EB8C/Me/Lv4sRbOHWDJUuWjDxUsxnWAwyhsAv9dHlgJ2AvzAng5gM/yPA8CfwYODJOvLt63Unop/OAbwI7DyqYlN4S4BTgw3Hi3W07TFGhn3rAFzEXZly0BDgN+FA/f7s2hX66O1DDnEiPyi+Bw+PEu2OEx+xbXgC/H/gssMYIDvmf/FjHxYln94N7CPLHcydgd0yR/DzKdyHyl5i//9tsBymb0E8fwhTuk+4h4DzgXOB0l19LoZ/OAA4DjmI0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" alt="STEAMcode">
+    <div class="head-titles">
+      <h1 data-i="appTitle">Classroom Observation</h1>
+      <div class="sub" data-i="appSub">STEAMcode — Education for Innovation</div>
+    </div>
+    <div class="ay-badge" id="ayBadge">2026–2027</div>
+    <div class="lang-toggle">
+      <button id="langEn" class="active" onclick="setLang('en')">EN</button>
+      <button id="langFr" onclick="setLang('fr')">FR</button>
+    </div>
+  </div>
+  <nav class="tabs">
+    <button class="tab-btn active" data-view="v-obs" data-i="tabObs" onclick="showView('v-obs')">Observation</button>
+    <button class="tab-btn" data-view="v-rec" data-i="tabRec" onclick="showView('v-rec')">Records</button>
+    <button class="tab-btn" data-view="v-adm" data-i="tabAdm" onclick="showView('v-adm')">Admin</button>
+  </nav>
+</header>
+
+<main>
+  <!-- OBSERVATION -->
+  <section id="v-obs">
+    <div class="card">
+      <h2><span class="dot"></span><span data-i="detailsTitle">Visit details</span></h2>
+      <div class="hint" data-i="detailsHint">Choose the school first; the teacher list narrows to that school, then branch adjusts to the teacher.</div>
+      <div class="grid three">
+        <div class="field"><label data-i="fDate">Date</label><input type="date" id="f_date"></div>
+        <div class="field"><label data-i="fObserver">Observer</label><select id="f_observer"></select></div>
+        <div class="field"><label data-i="fSchool">School</label><select id="f_school"></select></div>
+        <div class="field"><label data-i="fTeacher">Teacher</label><select id="f_teacher"></select></div>
+        <div class="field"><label data-i="fBranch">Branch</label><select id="f_branch"></select></div>
+        <div class="field"><label data-i="fGrade">Grade</label><select id="f_grade"></select></div>
+        <div class="field"><label data-i="fSection">Section</label><select id="f_section"></select></div>
+        <div class="field"><label data-i="fObserved">Observed class</label><select id="f_observed"></select></div>
+        <div class="field"><label><span data-i="fTopic">Session topic / unit</span> <span class="req">*</span></label><input id="f_topic"></div>
+        <div class="field"><label data-i="fSession">Session #</label><input id="f_sessno"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="dot"></span><span data-i="scaleTitle">Rating scale</span></h2>
+      <div class="scale" id="scaleLegend"></div>
+    </div>
+
+    <div class="card">
+      <h2><span class="dot"></span><span data-i="criteriaTitle">Observation criteria</span></h2>
+      <div id="critContainer"></div>
+      <div class="score-box">
+        <div>
+          <div class="score-pct" id="scorePct">—</div>
+        </div>
+        <div>
+          <div style="font-weight:800" data-i="scoreLabel">Achievement score</div>
+          <div class="score-tags" id="scoreTags"></div>
+          <div class="score-note" data-i="scoreNote">Score counts only items rated A or PA; “Not Observed” and “Not Applicable” are excluded.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="dot"></span><span data-i="commentsTitle">Overall comments</span></h2>
+      <textarea id="f_overall" data-i-ph="overallPh"></textarea>
+      <div class="btnrow no-print">
+        <button class="btn primary" onclick="saveRecord()" data-i="btnSave">Save</button>
+        <button class="btn coral" onclick="printCurrent()" data-i="btnPrint">Print / PDF</button>
+        <button class="btn ghost" onclick="newForm()" data-i="btnNew">New</button>
+        <span class="status" id="obsStatus"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- RECORDS -->
+  <section id="v-rec" class="hidden">
+    <div class="card">
+      <h2><span class="dot"></span><span data-i="recTitle">Saved observations</span> <span class="pill" id="recCount">0</span></h2>
+      <div class="hint" data-i="recHint">Records are saved in this browser. Use Backup to export a file you can keep or move to another computer.</div>
+      <div class="btnrow no-print">
+        <button class="btn ghost" onclick="backupRecords()" data-i="btnBackup">Backup (export file)</button>
+        <button class="btn ghost" onclick="document.getElementById('restoreFile').click()" data-i="btnRestore">Restore (import file)</button>
+        <input type="file" id="restoreFile" accept="application/json" class="hidden" onchange="restoreRecords(event)">
+        <span class="status" id="recStatus"></span>
+      </div>
+      <div style="overflow-x:auto;margin-top:12px">
+        <table class="rec">
+          <thead><tr>
+            <th data-i="thDate">Date</th><th data-i="thTeacher">Teacher</th><th data-i="thSchool">School</th>
+            <th data-i="thObserver">Observer</th><th data-i="thScore">Score</th><th></th>
+          </tr></thead>
+          <tbody id="recBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADMIN -->
+  <section id="v-adm" class="hidden">
+    <div class="card" id="pinGate">
+      <div class="pin-gate">
+        <div class="lock-emoji">🔒</div>
+        <h2 style="justify-content:center;display:flex" data-i="admLocked">Admin panel</h2>
+        <div class="hint" style="text-align:center" data-i="admLockedHint">Enter the PIN to manage names, schools and settings.</div>
+        <input type="password" id="pinInput" style="text-align:center;font-size:18px;letter-spacing:3px" placeholder="••••">
+        <div class="btnrow" style="justify-content:center;margin-top:10px">
+          <button class="btn primary" onclick="unlockAdmin()" data-i="btnUnlock">Unlock</button>
+        </div>
+        <div class="status err" id="pinStatus" style="display:block;margin-top:6px"></div>
+      </div>
+    </div>
+
+    <div id="admBody" class="hidden">
+      <div class="card">
+        <h2><span class="dot"></span><span data-i="admSettings">General settings</span></h2>
+        <div class="grid">
+          <div class="field"><label data-i="fAY">Academic year</label><input id="a_ay"></div>
+        </div>
+        <div class="btnrow"><button class="btn primary mini" onclick="saveSettings()" data-i="btnApply">Apply</button>
+          <button class="btn danger mini" onclick="lockAdmin()" data-i="btnLock">Lock</button>
+          <span class="status" id="setStatus"></span></div>
+      </div>
+
+      <div class="card">
+        <h2><span class="dot"></span><span data-i="admObservers">Observers</span></h2>
+        <div class="hint" data-i="admObsHint">People who can carry out observations.</div>
+        <div class="chiplist" id="obsChips"></div>
+        <div class="btnrow"><input id="newObserver" style="max-width:240px" data-i-ph="addNamePh">
+          <button class="btn ghost mini" onclick="addObserver()" data-i="btnAdd">Add</button></div>
+      </div>
+
+      <div class="card">
+        <h2><span class="dot"></span><span data-i="admSchools">Schools</span></h2>
+        <div class="chiplist" id="schoolChips"></div>
+        <div class="btnrow"><input id="newSchool" style="max-width:240px" data-i-ph="addSchoolPh">
+          <button class="btn ghost mini" onclick="addSchool()" data-i="btnAdd">Add</button></div>
+      </div>
+
+      <div class="card">
+        <h2><span class="dot"></span><span data-i="admTeachers">Teachers</span> <span class="pill" id="tCount">0</span></h2>
+        <div class="hint" data-i="admTeachHint">Each teacher can be assigned to one or more schools and branches.</div>
+        <div id="teacherList"></div>
+        <div class="btnrow"><button class="btn ghost mini" onclick="addTeacher()" data-i="btnAddTeacher">+ Add teacher</button></div>
+      </div>
+
+      <div class="card">
+        <h2><span class="dot"></span><span data-i="admSecurity">Security & backup</span></h2>
+        <div class="grid">
+          <div class="field"><label data-i="fNewPin">New PIN</label><input id="a_pin" type="text"></div>
+        </div>
+        <div class="btnrow">
+          <button class="btn primary mini" onclick="changePin()" data-i="btnChangePin">Change PIN</button>
+          <button class="btn coral mini" onclick="downloadCopy()" data-i="btnDownloadCopy">Download updated copy</button>
+          <button class="btn ghost mini" onclick="backupConfig()" data-i="btnBackupCfg">Backup settings</button>
+          <button class="btn ghost mini" onclick="document.getElementById('cfgFile').click()" data-i="btnRestoreCfg">Restore settings</button>
+          <input type="file" id="cfgFile" accept="application/json" class="hidden" onchange="restoreConfig(event)">
+          <span class="status" id="secStatus"></span>
+        </div>
+        <div class="hint" style="margin-top:8px" data-i="downloadHint">“Download updated copy” saves a fresh HTML file with your current names baked in — use it to archive this year or share with observers.</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="reportArea"></div>
+
+<script>
+var LS_CFG="steamcode_obs_cfg_v3", LS_REC="steamcode_obs_rec_v1", LS_LANG="steamcode_obs_lang";
+var SEED=JSON.parse(document.getElementById('seed').textContent);
+var CRIT=JSON.parse(document.getElementById('crit').textContent);
+var I18N=JSON.parse(document.getElementById('i18n').textContent);
+var LOGO=document.querySelector('header img.logo').src;
+var CFG=loadCfg(), RECORDS=loadRecords(), LANG=loadLang();
+var ADMIN_UNLOCKED=false;
+
+function today(){return new Date().toISOString().slice(0,10);}
+function loadCfg(){try{var s=localStorage.getItem(LS_CFG);if(s)return JSON.parse(s);}catch(e){}return JSON.parse(JSON.stringify(SEED));}
+function saveCfg(){try{localStorage.setItem(LS_CFG,JSON.stringify(CFG));}catch(e){}}
+function loadRecords(){try{var s=localStorage.getItem(LS_REC);if(s)return JSON.parse(s);}catch(e){}return [];}
+function saveRecords(){try{localStorage.setItem(LS_REC,JSON.stringify(RECORDS));}catch(e){}}
+function loadLang(){try{return localStorage.getItem(LS_LANG)||'en';}catch(e){return 'en';}}
+
+function t(k){var d=I18N[LANG]||I18N.en;return (d[k]!=null?d[k]:(I18N.en[k]!=null?I18N.en[k]:k));}
+function setLang(l){LANG=l;try{localStorage.setItem(LS_LANG,l);}catch(e){}
+  document.getElementById('langEn').classList.toggle('active',l==='en');
+  document.getElementById('langFr').classList.toggle('active',l==='fr');
+  document.documentElement.lang=l;applyLang();renderAll();}
+function applyLang(){
+  document.querySelectorAll('[data-i]').forEach(function(el){el.textContent=t(el.getAttribute('data-i'));});
+  document.querySelectorAll('[data-i-ph]').forEach(function(el){el.setAttribute('placeholder',t(el.getAttribute('data-i-ph')));});
+  document.title=t('appTitle')+' — STEAMcode';
+}
+
+function showView(v){
+  ['v-obs','v-rec','v-adm'].forEach(function(id){document.getElementById(id).classList.toggle('hidden',id!==v);});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-view')===v);});
+  if(v==='v-rec')renderRecords();
+  if(v==='v-adm')renderAdmin();
+}
+
+function opt(v,txt){var o=document.createElement('option');o.value=v;o.textContent=txt;return o;}
+function branchLabel(code){var m=CFG.branches.filter(function(s){return s.code===code;})[0];return m?(LANG==='fr'?m.fr:m.en):(code||'');}
+function observedLabel(code){var m=(CFG.observedTypes||[]).filter(function(s){return s.code===code;})[0];return m?(LANG==='fr'?m.fr:m.en):(code||'');}
+
+function fillObservers(){var s=document.getElementById('f_observer');s.innerHTML='';s.appendChild(opt('',t('choose')));
+  CFG.observers.forEach(function(n){s.appendChild(opt(n,n));});}
+function fillSchools(){var s=document.getElementById('f_school');s.innerHTML='';s.appendChild(opt('',t('choose')));
+  CFG.schools.forEach(function(sc){s.appendChild(opt(sc,sc));});}
+function gradesForSelection(){
+  var ti=document.getElementById('f_teacher').value, sc=document.getElementById('f_school').value, br=document.getElementById('f_branch').value;
+  if(ti===''||sc==='')return CFG.grades;
+  var tt=CFG.teachers[+ti];var set=[];
+  (tt.assignments||[]).forEach(function(a){
+    if(a.school!==sc)return;
+    if(br){var parts=(''+a.section).split('+').map(function(x){return x.trim();});if(parts.indexOf(br)<0)return;}
+    (a.grades||[]).forEach(function(g){if(set.indexOf(g)<0)set.push(g);});
+  });
+  if(!set.length)return CFG.grades;
+  return CFG.grades.filter(function(g){return set.indexOf(g)>=0;});
+}
+function fillGrades(){var s=document.getElementById('f_grade');var prev=s.value;s.innerHTML='';s.appendChild(opt('',t('choose')));
+  gradesForSelection().forEach(function(g){s.appendChild(opt(g,g));});
+  if(prev&&[].slice.call(s.options).some(function(o){return o.value===prev;}))s.value=prev;else s.value='';}
+function fillSections(){var s=document.getElementById('f_section');s.innerHTML='';s.appendChild(opt('',t('choose')));
+  CFG.sections.forEach(function(x){s.appendChild(opt(x,x));});}
+function fillObserved(){var s=document.getElementById('f_observed');s.innerHTML='';s.appendChild(opt('',t('choose')));
+  (CFG.observedTypes||[]).forEach(function(o){s.appendChild(opt(o.code,observedLabel(o.code)));});}
+
+function onSchoolChange(){
+  var sc=document.getElementById('f_school').value;
+  var st=document.getElementById('f_teacher');st.innerHTML='';st.appendChild(opt('',t('choose')));
+  if(sc){CFG.teachers.forEach(function(tt,i){
+    if((tt.assignments||[]).some(function(a){return a.school===sc;}))st.appendChild(opt(String(i),tt.name));});}
+  onTeacherChange();
+}
+function onTeacherChange(){
+  var ti=document.getElementById('f_teacher').value, sc=document.getElementById('f_school').value;
+  var sb=document.getElementById('f_branch');sb.innerHTML='';sb.appendChild(opt('',t('choose')));
+  if(ti!==''&&sc){var tt=CFG.teachers[+ti];var brs=[];
+    (tt.assignments||[]).forEach(function(a){if(a.school===sc){(''+a.section).split('+').forEach(function(x){x=x.trim();if(x&&brs.indexOf(x)<0)brs.push(x);});}});
+    brs.forEach(function(b){sb.appendChild(opt(b,branchLabel(b)));});
+    if(brs.length===1)sb.value=brs[0];}
+  fillGrades();
+}
+
+function renderScale(){var el=document.getElementById('scaleLegend');el.innerHTML='';
+  ['A','PA','NO','NAP'].forEach(function(code){var d=document.createElement('div');d.className='chip';
+    d.innerHTML='<span class="sw '+code+'"></span><b>'+code+'</b> — '+t('scale_'+code);el.appendChild(d);});}
+function renderCriteria(){
+  var box=document.getElementById('critContainer');box.innerHTML='';
+  CRIT.forEach(function(sec){
+    var wrap=document.createElement('div');wrap.className='crit-sec';
+    var head=document.createElement('div');head.className='sec-head';
+    head.innerHTML='<span>'+(LANG==='fr'?sec.fr:sec.en)+'</span><span class="sc">'+sec.items.length+'</span>';
+    wrap.appendChild(head);
+    sec.items.forEach(function(it){
+      var row=document.createElement('div');row.className='crit-row';
+      var txt=document.createElement('div');txt.className='txt';txt.textContent=(LANG==='fr'?it.fr:it.en);
+      var rate=document.createElement('div');rate.className='rate';rate.setAttribute('data-item',it.id);
+      ['A','PA','NO','NAP'].forEach(function(code){
+        var lab=document.createElement('label');lab.className=code;
+        lab.innerHTML='<input type="radio" name="r_'+it.id+'" value="'+code+'"><span>'+code+'</span>';
+        lab.querySelector('input').addEventListener('change',function(){
+          rate.querySelectorAll('label').forEach(function(l){l.classList.remove('on');});lab.classList.add('on');computeScore();});
+        rate.appendChild(lab);
+      });
+      row.appendChild(txt);row.appendChild(rate);wrap.appendChild(row);
+    });
+    var cm=document.createElement('div');cm.className='sec-comment';
+    cm.innerHTML='<label>'+t('sectionComment')+' <span class="req">*</span></label><textarea class="needfill" data-seccmt="'+sec.id+'" data-ph2="1"></textarea>';
+    wrap.appendChild(cm);box.appendChild(wrap);
+  });
+  document.querySelectorAll('textarea[data-seccmt]').forEach(function(x){x.setAttribute('placeholder',t('sectionCommentPh'));
+    x.addEventListener('input',function(){x.classList.toggle('needfill',!x.value.trim());});});
+}
+function computeScore(){
+  var a=0,pa=0,no=0,nap=0;
+  CRIT.forEach(function(sec){sec.items.forEach(function(it){
+    var v=(document.querySelector('input[name="r_'+it.id+'"]:checked')||{}).value;
+    if(v==='A')a++;else if(v==='PA')pa++;else if(v==='NO')no++;else if(v==='NAP')nap++;});});
+  var rated=a+pa+no;var pct=rated?Math.round((a*1 + pa*(2/3) + no*(1/3))/rated*100):0;
+  document.getElementById('scorePct').textContent=rated?(pct+'%'):'—';
+  document.getElementById('scoreTags').innerHTML=
+    '<span style="color:var(--ok)">A '+a+'</span><span style="color:var(--gold)">PA '+pa+'</span>'+
+    '<span style="color:var(--gray)">NO '+no+'</span><span>NAP '+nap+'</span>';
+  return {a:a,pa:pa,no:no,nap:nap,pct:pct};
+}
+
+function collect(){
+  var ti=document.getElementById('f_teacher').value;var tt=ti!==''?CFG.teachers[+ti]:null;
+  var ratings={},seccmt={};
+  CRIT.forEach(function(sec){
+    sec.items.forEach(function(it){var v=(document.querySelector('input[name="r_'+it.id+'"]:checked')||{}).value;if(v)ratings[it.id]=v;});
+    var c=document.querySelector('textarea[data-seccmt="'+sec.id+'"]');seccmt[sec.id]=c?c.value.trim():'';
+  });
+  return {id:Date.now(),academicYear:CFG.academicYear,date:document.getElementById('f_date').value,
+    observer:document.getElementById('f_observer').value,observed:document.getElementById('f_observed').value,
+    teacher:tt?tt.name:'',role:tt?tt.role:'',school:document.getElementById('f_school').value,
+    branch:document.getElementById('f_branch').value,grade:document.getElementById('f_grade').value,
+    section:document.getElementById('f_section').value,topic:document.getElementById('f_topic').value,
+    sessno:document.getElementById('f_sessno').value,ratings:ratings,seccmt:seccmt,
+    overall:document.getElementById('f_overall').value,score:computeScore()};
+}
+function setStatus(id,msg,ok){var e=document.getElementById(id);e.textContent=msg;e.className='status '+(ok?'ok':'err');
+  if(msg&&ok)setTimeout(function(){e.textContent='';},4000);}
+function saveRecord(){
+  var r=collect();
+  if(!r.date||!r.observer||!r.school||!r.teacher){setStatus('obsStatus',t('needFields'),false);return;}
+  if(r.date>today()){setStatus('obsStatus',t('futureDate'),false);return;}
+  if(!r.topic||!r.topic.trim()){document.getElementById('f_topic').focus();setStatus('obsStatus',t('needTopic'),false);return;}
+  var missing=CRIT.some(function(sec){return !r.seccmt[sec.id];});
+  if(missing){document.querySelectorAll('textarea[data-seccmt]').forEach(function(x){x.classList.toggle('needfill',!x.value.trim());});
+    setStatus('obsStatus',t('needComments'),false);return;}
+  RECORDS.unshift(r);saveRecords();setStatus('obsStatus',t('saved'),true);
+}
+function newForm(){
+  ['f_topic','f_sessno','f_overall'].forEach(function(id){document.getElementById(id).value='';});
+  ['f_observer','f_school','f_teacher','f_branch','f_grade','f_section','f_observed'].forEach(function(id){document.getElementById(id).value='';});
+  onSchoolChange();
+  document.querySelectorAll('#critContainer input[type=radio]').forEach(function(i){i.checked=false;});
+  document.querySelectorAll('#critContainer .rate label').forEach(function(l){l.classList.remove('on');});
+  document.querySelectorAll('#critContainer textarea[data-seccmt]').forEach(function(x){x.value='';x.classList.add('needfill');});
+  setDefaultDate();computeScore();setStatus('obsStatus',t('cleared'),true);
+}
+function setDefaultDate(){var d=document.getElementById('f_date');d.max=today();if(!d.value)d.value=today();}
+
+function renderRecords(){
+  document.getElementById('recCount').textContent=RECORDS.length;
+  var tb=document.getElementById('recBody');tb.innerHTML='';
+  if(!RECORDS.length){tb.innerHTML='<tr><td colspan="6" class="muted">'+t('noRecords')+'</td></tr>';return;}
+  RECORDS.forEach(function(r){var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+(r.date||'')+'</td><td>'+esc(r.teacher)+'</td><td>'+esc(r.school)+'</td>'+
+      '<td>'+esc(r.observer)+'</td><td><span class="pill">'+(r.score?r.score.pct+'%':'—')+'</span></td>'+
+      '<td style="white-space:nowrap"><button class="btn coral mini" onclick="printSaved('+r.id+')">'+t('print')+'</button> '+
+      '<button class="btn danger mini" onclick="deleteRecord('+r.id+')">'+t('delete')+'</button></td>';
+    tb.appendChild(tr);});
+}
+function deleteRecord(id){if(!confirm(t('confirmDelete')))return;RECORDS=RECORDS.filter(function(r){return r.id!==id;});saveRecords();renderRecords();}
+function backupRecords(){download('steamcode-observations-'+CFG.academicYear.replace(/[^0-9a-z]/gi,'')+'.json',JSON.stringify(RECORDS,null,2));setStatus('recStatus',t('exported'),true);}
+function restoreRecords(ev){var f=ev.target.files[0];if(!f)return;var rd=new FileReader();rd.onload=function(){
+  try{var arr=JSON.parse(rd.result);if(!Array.isArray(arr))throw 0;
+    if(confirm(t('confirmRestore'))){RECORDS=arr;}else{RECORDS=arr.concat(RECORDS);}
+    saveRecords();renderRecords();setStatus('recStatus',t('imported'),true);
+  }catch(e){setStatus('recStatus',t('badFile'),false);}ev.target.value='';};rd.readAsText(f);}
+
+function buildReport(r){
+  function meta(lbl,val){return '<div><span>'+lbl+':</span> '+esc(val||'—')+'</div>';}
+  var h='<div class="rep-head"><img src="'+LOGO+'"><div class="rep-title">'+t('reportTitle')+'</div></div>';
+  h+='<div class="rep-meta">'+meta(t('fAY'),r.academicYear)+meta(t('fDate'),r.date)+meta(t('fObserver'),r.observer)+
+    meta(t('fSchool'),r.school)+meta(t('fTeacher'),r.teacher)+meta(t('fBranch'),branchLabel(r.branch))+
+    meta(t('fGrade'),r.grade)+meta(t('fSection'),r.section)+meta(t('fObserved'),observedLabel(r.observed))+
+    '<div style="grid-column:1/4"><span>'+t('fTopic')+':</span> '+esc(r.topic||'—')+(r.sessno?('  ·  '+t('fSession')+' '+esc(r.sessno)):'')+'</div></div>';
+  CRIT.forEach(function(sec){
+    h+='<div class="rep-sec"><div class="rh">'+(LANG==='fr'?sec.fr:sec.en)+'</div>';
+    sec.items.forEach(function(it){var v=r.ratings[it.id]||'—';
+      h+='<div class="rep-item"><div>'+esc(LANG==='fr'?it.fr:it.en)+'</div><div class="rr">'+v+'</div></div>';});
+    if(r.seccmt&&r.seccmt[sec.id])h+='<div class="rep-cmt">'+esc(r.seccmt[sec.id])+'</div>';
+    h+='</div>';});
+  if(r.overall)h+='<div class="rep-sec"><div class="rh">'+t('commentsTitle')+'</div><div class="rep-cmt">'+esc(r.overall)+'</div></div>';
+  h+='<div class="rep-score">'+t('scoreLabel')+': '+(r.score?r.score.pct+'%':'—')+
+     '  (A '+(r.score?r.score.a:0)+' · PA '+(r.score?r.score.pa:0)+' · NO '+(r.score?r.score.no:0)+' · NAP '+(r.score?r.score.nap:0)+')</div>';
+  return h;
+}
+function printReport(r){document.getElementById('reportArea').innerHTML=buildReport(r);window.print();}
+function printCurrent(){var r=collect();if(!r.teacher){setStatus('obsStatus',t('needTeacher'),false);return;}printReport(r);}
+function printSaved(id){var r=RECORDS.filter(function(x){return x.id===id;})[0];if(r)printReport(r);}
+
+function renderAdmin(){
+  document.getElementById('pinGate').classList.toggle('hidden',ADMIN_UNLOCKED);
+  document.getElementById('admBody').classList.toggle('hidden',!ADMIN_UNLOCKED);
+  if(!ADMIN_UNLOCKED)return;
+  document.getElementById('a_ay').value=CFG.academicYear;
+  renderChips('obsChips',CFG.observers,removeObserver);
+  renderChips('schoolChips',CFG.schools,removeSchool);
+  renderTeachers();
+}
+function unlockAdmin(){var v=document.getElementById('pinInput').value;
+  if(v===CFG.pin){ADMIN_UNLOCKED=true;document.getElementById('pinInput').value='';document.getElementById('pinStatus').textContent='';renderAdmin();}
+  else{document.getElementById('pinStatus').textContent=t('wrongPin');}}
+function lockAdmin(){ADMIN_UNLOCKED=false;renderAdmin();}
+function saveSettings(){CFG.academicYear=document.getElementById('a_ay').value||CFG.academicYear;saveCfg();
+  document.getElementById('ayBadge').textContent=CFG.academicYear;setStatus('setStatus',t('applied'),true);}
+function renderChips(elId,arr,rm){var el=document.getElementById(elId);el.innerHTML='';
+  arr.forEach(function(n,i){var d=document.createElement('div');d.className='chip-item';
+    d.innerHTML='<span>'+esc(n)+'</span><button title="remove" onclick="'+rm.name+'('+i+')">×</button>';el.appendChild(d);});}
+function addObserver(){var i=document.getElementById('newObserver');if(!i.value.trim())return;CFG.observers.push(i.value.trim());i.value='';saveCfg();renderAdmin();fillObservers();}
+function removeObserver(i){CFG.observers.splice(i,1);saveCfg();renderAdmin();fillObservers();}
+function addSchool(){var i=document.getElementById('newSchool');if(!i.value.trim())return;CFG.schools.push(i.value.trim());i.value='';saveCfg();renderAdmin();fillSchools();}
+function removeSchool(i){CFG.schools.splice(i,1);saveCfg();renderAdmin();fillSchools();}
+function renderTeachers(){
+  var box=document.getElementById('teacherList');box.innerHTML='';
+  document.getElementById('tCount').textContent=CFG.teachers.length;
+  CFG.teachers.forEach(function(tt,ti){
+    var card=document.createElement('div');card.className='teacher-card';
+    var head='<div class="tc-head"><input value="'+escAttr(tt.name)+'" oninput="editTeacherName('+ti+',this.value)" style="max-width:260px">'+
+      '<button class="btn danger mini" onclick="removeTeacher('+ti+')">'+t('delete')+'</button></div>';
+    var roleSel='<div class="field" style="max-width:220px;margin-bottom:8px"><label>'+t('role')+'</label><select onchange="editTeacherRole('+ti+',this.value)">'+
+      ['teacher','assistant','lab','ict'].map(function(rk){return '<option value="'+rk+'"'+(tt.role===rk?' selected':'')+'>'+t('role_'+rk)+'</option>';}).join('')+'</select></div>';
+    var asg='<label>'+t('assignments')+'</label>';
+    (tt.assignments||[]).forEach(function(a,ai){
+      asg+='<div class="assign-row">'+
+        '<select onchange="editAssignSchool('+ti+','+ai+',this.value)">'+CFG.schools.map(function(s){return '<option'+(a.school===s?' selected':'')+'>'+esc(s)+'</option>';}).join('')+'</select>'+
+        '<select onchange="editAssignSection('+ti+','+ai+',this.value)">'+CFG.branches.map(function(s){return '<option value="'+s.code+'"'+(a.section===s.code?' selected':'')+'>'+s.code+'</option>';}).join('')+'</select>'+
+        '<button class="btn danger mini" onclick="removeAssign('+ti+','+ai+')">×</button></div>'+
+        '<input value="'+escAttr((a.grades||[]).join(', '))+'" oninput="editAssignGrades('+ti+','+ai+',this.value)" data-gph="1" style="margin:-2px 0 10px">';});
+    asg+='<button class="btn ghost mini" onclick="addAssign('+ti+')">+ '+t('addAssign')+'</button>';
+    card.innerHTML=head+roleSel+asg;box.appendChild(card);});
+  document.querySelectorAll('#teacherList input[data-gph]').forEach(function(x){x.setAttribute('placeholder',t('gradesPh'));});
+}
+function editAssignGrades(i,ai,v){
+  var toks=v.split(',').map(function(x){return x.trim().toUpperCase();});
+  CFG.teachers[i].assignments[ai].grades=CFG.grades.filter(function(g){return toks.indexOf(g.toUpperCase())>=0;});
+  saveCfg();
+}
+function editTeacherName(i,v){CFG.teachers[i].name=v;saveCfg();}
+function editTeacherRole(i,v){CFG.teachers[i].role=v;saveCfg();}
+function editAssignSchool(i,ai,v){CFG.teachers[i].assignments[ai].school=v;saveCfg();}
+function editAssignSection(i,ai,v){CFG.teachers[i].assignments[ai].section=v;saveCfg();}
+function addAssign(i){CFG.teachers[i].assignments=CFG.teachers[i].assignments||[];CFG.teachers[i].assignments.push({school:CFG.schools[0]||'',section:CFG.branches[0].code,grades:[]});saveCfg();renderTeachers();}
+function removeAssign(i,ai){CFG.teachers[i].assignments.splice(ai,1);saveCfg();renderTeachers();}
+function addTeacher(){CFG.teachers.push({name:t('newTeacher'),role:'teacher',assignments:[]});saveCfg();renderTeachers();}
+function removeTeacher(i){if(!confirm(t('confirmDelete')))return;CFG.teachers.splice(i,1);saveCfg();renderTeachers();}
+function changePin(){var v=document.getElementById('a_pin').value.trim();if(!v){setStatus('secStatus',t('pinEmpty'),false);return;}CFG.pin=v;saveCfg();document.getElementById('a_pin').value='';setStatus('secStatus',t('pinChanged'),true);}
+
+function downloadCopy(){
+  var seedEl=document.getElementById('seed');var orig=seedEl.textContent;
+  var clone=document.documentElement.cloneNode(true);
+  clone.querySelector('#seed').textContent=JSON.stringify(CFG);
+  var html='<!doctype html>\n<html lang="'+LANG+'">'+clone.innerHTML+'</html>';
+  seedEl.textContent=orig;
+  var yr=CFG.academicYear.replace(/[^0-9a-z]/gi,'');
+  download('STEAMcode-Class-Observation-'+yr+'.html',html,'text/html');
+  setStatus('secStatus',t('copyDownloaded'),true);
+}
+function backupConfig(){download('steamcode-settings.json',JSON.stringify(CFG,null,2));setStatus('secStatus',t('exported'),true);}
+function restoreConfig(ev){var f=ev.target.files[0];if(!f)return;var rd=new FileReader();rd.onload=function(){
+  try{var c=JSON.parse(rd.result);if(!c.teachers||!c.observers)throw 0;CFG=c;saveCfg();
+    document.getElementById('ayBadge').textContent=CFG.academicYear;renderAdmin();renderAll();
+    setStatus('secStatus',t('imported'),true);
+  }catch(e){setStatus('secStatus',t('badFile'),false);}ev.target.value='';};rd.readAsText(f);}
+
+function esc(s){return (''+(s==null?'':s)).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+function escAttr(s){return esc(s).replace(/"/g,'&quot;');}
+function download(name,content,type){var b=new Blob([content],{type:type||'application/json'});var u=URL.createObjectURL(b);
+  var a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(u);},1500);}
+
+function renderAll(){
+  document.getElementById('ayBadge').textContent=CFG.academicYear;
+  fillObservers();fillSchools();fillGrades();fillSections();fillObserved();onSchoolChange();
+  renderScale();renderCriteria();computeScore();
+}
+function init(){
+  document.getElementById('f_school').addEventListener('change',onSchoolChange);
+  document.getElementById('f_teacher').addEventListener('change',onTeacherChange);
+  document.getElementById('f_branch').addEventListener('change',fillGrades);
+  setLang(LANG);
+  setDefaultDate();
+  showView('v-obs');
+}
+init();
+</script>
+</body>
+</html>
